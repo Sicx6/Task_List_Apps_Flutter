@@ -13,7 +13,7 @@ class AppUsers extends ChangeNotifier {
     notifyListeners();
   }
 
-  AppUsers.instance() {
+  AppUsers._() {
     FirebaseAuth.instance.authStateChanges().listen((user) {
       // if (user != null) {
       //   this.user = user;
@@ -24,7 +24,9 @@ class AppUsers extends ChangeNotifier {
     });
   }
 
-  factory AppUsers() => AppUsers.instance();
+  factory AppUsers() => AppUsers._();
+
+  static AppUsers get instance => AppUsers();
 
   // static AppUsers get instance => AppUsers();
 

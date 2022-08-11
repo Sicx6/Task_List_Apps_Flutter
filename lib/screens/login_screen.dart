@@ -64,7 +64,7 @@ class LoginScreen extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () async {
                       try {
-                        await AppUsers().signIn(
+                        await AppUsers.instance.signIn(
                           email: emailController.text,
                           password: passwordController.text,
                         );
