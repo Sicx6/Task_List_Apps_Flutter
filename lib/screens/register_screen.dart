@@ -7,6 +7,7 @@ class RegisterScreen extends StatelessWidget {
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final nameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +30,12 @@ class RegisterScreen extends StatelessWidget {
             ),
             Column(
               children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Name',
+                  ),
+                ),
                 TextField(
                   controller: emailController,
                   decoration: const InputDecoration(
@@ -55,17 +62,37 @@ class RegisterScreen extends StatelessWidget {
                               MaterialPageRoute(
                                   builder: ((context) => LoginScreen())));
                         },
-                        child: const Text('Sign In')),
+                        child: const Text('Already sign up? Sign In')),
                   ],
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width,
                   height: 50,
                   child: ElevatedButton(
-                    onPressed: () {
-                      AppUsers().signUp(
-                          email: emailController.text,
-                          password: passwordController.text);
+                    onPressed: () async {
+                      try {
+                        AppUsers.instance.signUp(
+                            email: emailController.text,
+                            password: passwordController.text,
+                            name: nameController.text);
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                content: Text(
+                                    'User ${emailController.text} has succesfully register'),
+                              );
+                            });
+                      } catch (e) {
+                        Navigator.pop(context);
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                content: Text(e.toString()),
+                              );
+                            });
+                      }
                     },
                     child: const Text('Sign Up'),
                   ),

@@ -13,9 +13,6 @@ class Task {
   }
 
   Map<String, Object> toMap() {
-    return {
-      'title': title,
-      'description': description,
-    };
+    return {'title': title, 'description': description, 'author': author};
   }
 }

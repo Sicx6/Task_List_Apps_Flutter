@@ -63,7 +63,7 @@ class AddTaskScreen extends StatelessWidget {
                     final task = Task(
                         title: titleTextController.text,
                         description: descriptionTextController.text,
-                        author: AppUsers().user!.email!);
+                        author: AppUsers().user!.displayName ?? '');
 
                     Provider.of<TaskListProviders>(context, listen: false)
                         .addTask(task);

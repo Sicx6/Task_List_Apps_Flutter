@@ -73,7 +73,6 @@ class LoginScreen extends StatelessWidget {
                         Navigator.pop(context);
                       } catch (e) {
                         Navigator.pop(context);
-
                         showDialog(
                           context: context,
                           builder: (context) {
