@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:note_demo/providers/users_provider.dart';
 import 'package:note_demo/screens/register_screen.dart';
+import 'package:note_demo/widgets/custom_circular_progress_bar.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key? key}) : super(key: key);
@@ -64,11 +65,15 @@ class LoginScreen extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () async {
                       try {
+                        LoadingIndicator.showLoadingDialog(context);
                         await AppUsers.instance.signIn(
                           email: emailController.text,
                           password: passwordController.text,
                         );
+                        Navigator.pop(context);
                       } catch (e) {
+                        Navigator.pop(context);
+
                         showDialog(
                           context: context,
                           builder: (context) {
@@ -77,6 +82,14 @@ class LoginScreen extends StatelessWidget {
                             );
                           },
                         );
+                        // showDialog(
+                        //   context: context,
+                        //   builder: (context) {
+                        //     return const Center(
+                        //         child: CircularProgressIndicator());
+                        //   },
+                        // );
+
                       }
                     },
                     child: const Text('Sign In'),
