@@ -34,7 +34,7 @@ class AppUsers extends ChangeNotifier {
     await FirebaseAuth.instance.signOut();
   }
 
-  Future<void> signIn({required String email, required String password}) async {
+  signIn({required String email, required String password}) async {
     print('email: $email');
     print('password: $password');
 
@@ -64,17 +64,17 @@ class AppUsers extends ChangeNotifier {
           .createUserWithEmailAndPassword(email: email, password: password);
 
       user!.updateDisplayName(name);
-      return true;
+      // return true;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+      }
+    } catch (e) {
+      print(e);
+      throw (e.toString());
     }
-    // on FirebaseAuthException catch (e) {
-    //   if (e.code == 'weak-password') {
-    //     print('The password provided is too weak.');
-    //   } else if (e.code == 'email-already-in-use') {
-    //     print('The account already exists for that email.');
-    //   }
-    // }
-    catch (e) {
-      throw (e);
-    }
+    return true;
   }
 }

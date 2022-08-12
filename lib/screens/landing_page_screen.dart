@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:note_demo/providers/users_provider.dart';
+import 'package:note_demo/screens/home_screen.dart';
 import 'package:note_demo/screens/homepage_old.dart';
 import 'package:note_demo/screens/login_screen.dart';
 import 'package:note_demo/screens/task_list_screen.dart';
@@ -14,7 +15,7 @@ class LandingPage extends StatelessWidget {
     final appUsers = Provider.of<AppUsers>(context);
     if (appUsers.user != null) {
       print('logged in');
-      return TaskListScreen();
+      return const HomeScreen();
     } else {
       print('Not logged in');
       return LoginScreen();

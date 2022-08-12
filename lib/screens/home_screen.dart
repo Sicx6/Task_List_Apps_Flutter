@@ -7,72 +7,76 @@ import 'package:note_demo/screens/add_task.dart';
 import 'package:note_demo/services/api.dart';
 import 'package:provider/provider.dart';
 
-class TaskListScreen extends StatelessWidget {
-  const TaskListScreen({Key? key}) : super(key: key);
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    getTaskList();
     return Scaffold(
-      body: Consumer<TaskListProviders>(
-        builder: ((context, value, child) {
-          final taskList = value.taskList;
-          return Container(
-            padding: const EdgeInsets.only(top: 60, right: 25, left: 25),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    const Text(
-                      'Tasks List Screen',
-                      style:
-                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                    ),
-                    Expanded(child: Container()),
-                    IconButton(
-                      splashRadius: 25,
-                      onPressed: () {
-                        // getUser();
-                        AppUsers().user;
-                        print(AppUsers().user);
-                      },
-                      icon: const Icon(
-                        Icons.person,
-                        size: 30,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    IconButton(
-                      splashRadius: 25,
-                      onPressed: () {
-                        AppUsers().signOut();
-                      },
-                      icon: const Icon(
-                        Icons.logout,
-                        size: 30,
-                      ),
-                    ),
-                  ],
-                ),
-                Expanded(
-                  child: ListView(
+      body: StreamBuilder<List<Task>>(
+        stream: getTaskListStream(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List<Task> taskList = snapshot.data!;
+            return Container(
+              padding: const EdgeInsets.only(top: 60, right: 25, left: 25),
+              child: Column(
+                children: [
+                  Row(
                     children: [
-                      ...List.generate(
-                        taskList.length,
-                        (index) {
-                          return TaskContainer(
-                              index: index, task: taskList[index]);
+                      const Text(
+                        'Tasks List Screen',
+                        style: TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.bold),
+                      ),
+                      Expanded(child: Container()),
+                      IconButton(
+                        splashRadius: 25,
+                        onPressed: () {
+                          // getUser();
+                          AppUsers().user;
+                          print(AppUsers().user);
                         },
+                        icon: const Icon(
+                          Icons.person,
+                          size: 30,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      IconButton(
+                        splashRadius: 25,
+                        onPressed: () {
+                          AppUsers().signOut();
+                        },
+                        icon: const Icon(
+                          Icons.logout,
+                          size: 30,
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          );
-        }),
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        ...List.generate(
+                          taskList.length,
+                          (index) {
+                            return TaskContainer(
+                                index: index, task: taskList[index]);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          } else {
+            return Container();
+          }
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -142,6 +146,7 @@ class TaskContainer extends StatelessWidget {
                   final taskListProviders =
                       Provider.of<TaskListProviders>(context, listen: false);
                   taskListProviders.deleteTask(index);
+                  // await deleteTask('taskId');
                 },
                 child: const Icon(Icons.delete)),
           ),

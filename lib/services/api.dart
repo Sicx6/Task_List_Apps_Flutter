@@ -1,7 +1,57 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:note_demo/models/task_model.dart';
+
+Future<List<Task>> getTaskList() async {
+  final snapshot = await FirebaseFirestore.instance.collection('task').get();
+
+  return snapshot.docs.map((e) => Task.fromMap(e.data())).toList();
+}
+
+// Stream<List<Task>> getTaskListStream() {
+//   final snapshots = FirebaseFirestore.instance.collection('task').snapshots();
+
+//   final snapshot = snapshots
+//       .map((snapshot) => snapshot.docs.map((e) => Task.fromMap(e.data())))
+//       .toList();
+
+//   return snapshot;
+// }
+
+Stream<List<Task>> getTaskListStream() {
+  final snapshots = FirebaseFirestore.instance.collection('tasks').snapshots();
+  return snapshots.map(
+      (snapshot) => snapshot.docs.map((e) => Task.fromMap(e.data())).toList());
+}
+
+Future<bool> addTask(Task task) async {
+  try {
+    await FirebaseFirestore.instance.collection('task').add(task.toMap());
+    return true;
+  } catch (e) {
+    print(e);
+    throw (e);
+  }
+}
+
+Future<bool> deleteTask(String taskId) async {
+  try {
+    await FirebaseFirestore.instance.doc('task/$taskId').delete();
+    return true;
+  } catch (e) {
+    print(e);
+    throw (e);
+  }
+}
+
+
+
+
+
+
 // import 'package:dio/dio.dart';
 // import 'package:note_demo/models/toDo_model.dart';
 
-// Future<List<ToDo>> getToDo() async {
+// Future<List<ToDo>> getToDo() async { 
 //   try {
 //     Response response =
 //         await Dio().get('https://jsonplaceholder.typicode.com/todos');

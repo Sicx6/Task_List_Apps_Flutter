@@ -17,9 +17,8 @@ class LoginScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.note,
-              size: 90,
+            Image.asset(
+              'assets/logo.png',
             ),
             const Text(
               'Sign In User',
@@ -34,12 +33,17 @@ class LoginScreen extends StatelessWidget {
                   controller: emailController,
                   decoration: const InputDecoration(
                     labelText: 'email',
+                    border: OutlineInputBorder(),
                   ),
+                ),
+                const SizedBox(
+                  height: 10,
                 ),
                 TextField(
                   controller: passwordController,
                   decoration: const InputDecoration(
                     labelText: 'password',
+                    border: OutlineInputBorder(),
                   ),
                   obscureText: true,
                 ),

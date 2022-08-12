@@ -17,9 +17,8 @@ class RegisterScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.note,
-              size: 90,
+            Image.asset(
+              'assets/logo.png',
             ),
             const Text(
               'Sign Up User',
@@ -33,18 +32,27 @@ class RegisterScreen extends StatelessWidget {
                 TextField(
                   controller: nameController,
                   decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
                     labelText: 'Name',
                   ),
+                ),
+                const SizedBox(
+                  height: 10,
                 ),
                 TextField(
                   controller: emailController,
                   decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
                     labelText: 'email',
                   ),
+                ),
+                const SizedBox(
+                  height: 10,
                 ),
                 TextField(
                   controller: passwordController,
                   decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
                     labelText: 'password',
                   ),
                   obscureText: true,
@@ -84,6 +92,7 @@ class RegisterScreen extends StatelessWidget {
                               );
                             });
                       } catch (e) {
+                        Navigator.pop(context);
                         Navigator.pop(context);
                         showDialog(
                             context: context,

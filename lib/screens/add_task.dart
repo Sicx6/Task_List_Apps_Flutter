@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:note_demo/models/task_model.dart';
 import 'package:note_demo/providers/task_list_providers.dart';
 import 'package:note_demo/providers/users_provider.dart';
+import 'package:note_demo/services/api.dart';
+import 'package:note_demo/widgets/custom_circular_progress_bar.dart';
 import 'package:provider/provider.dart';
 
 class AddTaskScreen extends StatelessWidget {
@@ -56,19 +58,37 @@ class AddTaskScreen extends StatelessWidget {
                 height: 50,
                 width: MediaQuery.of(context).size.width,
                 child: ElevatedButton(
-                  onPressed: () {
-                    print(titleTextController.text);
-                    print(descriptionTextController.text);
+                  onPressed: () async {
+                    try {
+                      LoadingIndicator.showLoadingDialog(context);
+                      print(titleTextController.text);
+                      print(descriptionTextController.text);
 
-                    final task = Task(
-                        title: titleTextController.text,
-                        description: descriptionTextController.text,
-                        author: AppUsers().user!.displayName ?? '');
+                      final task = Task(
+                          title: titleTextController.text,
+                          description: descriptionTextController.text,
+                          author: AppUsers().user!.displayName ?? '');
 
-                    Provider.of<TaskListProviders>(context, listen: false)
-                        .addTask(task);
+                      final result = await addTask(task);
 
-                    Navigator.pop(context);
+                      if (result) {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      } else {
+                        throw 'Unable to add task';
+                      }
+                    } catch (e) {
+                      Navigator.pop(context);
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              content: Text(e.toString()),
+                            );
+                          });
+                    }
+                    // Provider.of<TaskListProviders>(context, listen: false)
+                    //     .addTask(task);
                   },
                   child: const Text('Add Task'),
                 ),
