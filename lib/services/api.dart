@@ -7,20 +7,11 @@ Future<List<Task>> getTaskList() async {
   return snapshot.docs.map((e) => Task.fromMap(e.data())).toList();
 }
 
-// Stream<List<Task>> getTaskListStream() {
-//   final snapshots = FirebaseFirestore.instance.collection('task').snapshots();
-
-//   final snapshot = snapshots
-//       .map((snapshot) => snapshot.docs.map((e) => Task.fromMap(e.data())))
-//       .toList();
-
-//   return snapshot;
-// }
-
 Stream<List<Task>> getTaskListStream() {
   final snapshots = FirebaseFirestore.instance.collection('tasks').snapshots();
-  return snapshots.map(
-      (snapshot) => snapshot.docs.map((e) => Task.fromMap(e.data())).toList());
+  final snap = snapshots.map((snapshot) =>
+      snapshot.docs.map((e) => Task.fromMap(e.data(), id: e.id)).toList());
+  return snap;
 }
 
 Future<bool> addTask(Task task) async {
@@ -42,6 +33,8 @@ Future<bool> deleteTask(String taskId) async {
     throw (e);
   }
 }
+
+
 
 
 

@@ -10,11 +10,12 @@ class Task {
       required this.author,
       this.id});
 
-  static Task fromMap(Map<String, dynamic> data) {
+  static Task fromMap(Map<String, dynamic> data, {String? id}) {
     return Task(
       title: data['title'] ?? '',
       description: data['description'] ?? '',
       author: data['author'] ?? '',
+      id: id,
     );
   }
 

@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:get_storage/get_storage.dart';
 
 void main() async {
-  await GetStorage.init();
+  // await GetStorage.init();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MyApp());
@@ -23,21 +23,21 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final taskList = box.read('taskList');
+    // final taskList = box.read('taskList');
 
-    final List<Task> list = taskList != null
-        ? List.from((taskList as List<dynamic>).map((e) => Task.fromMap(e)))
-        : [];
+    // final List<Task> list = taskList != null
+    //     ? List.from((taskList as List<dynamic>).map((e) => Task.fromMap(e)))
+    //     : [];
 
-    final taskListProviders = TaskListProviders(taskList: list);
+    // final taskListProviders = TaskListProviders(taskList: list);
     final appUsers = AppUsers();
 
-    print(list);
+    // print(list);
 
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<TaskListProviders>.value(
-            value: taskListProviders),
+        // ChangeNotifierProvider<TaskListProviders>.value(
+        //     value: taskListProviders),
         ChangeNotifierProvider<AppUsers>.value(value: appUsers),
       ],
       child: Builder(

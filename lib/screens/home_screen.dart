@@ -34,7 +34,7 @@ class HomeScreen extends StatelessWidget {
                         splashRadius: 25,
                         onPressed: () {
                           // getUser();
-                          AppUsers().user;
+                          AppUsers.instance.user;
                           print(AppUsers().user);
                         },
                         icon: const Icon(
@@ -48,7 +48,7 @@ class HomeScreen extends StatelessWidget {
                       IconButton(
                         splashRadius: 25,
                         onPressed: () {
-                          AppUsers().signOut();
+                          AppUsers.instance.signOut();
                         },
                         icon: const Icon(
                           Icons.logout,
@@ -142,11 +142,19 @@ class TaskContainer extends StatelessWidget {
           Material(
             color: Colors.transparent,
             child: InkWell(
-                onTap: () {
-                  final taskListProviders =
-                      Provider.of<TaskListProviders>(context, listen: false);
-                  taskListProviders.deleteTask(index);
-                  // await deleteTask('taskId');
+                onTap: () async {
+                  try {
+                    // final taskListProviders =
+                    //     Provider.of<TaskListProviders>(context, listen: false);
+                    // taskListProviders.deleteTask(index);
+                    // await deleteTask('taskId');
+                    print(task.id);
+                    if (task.id != null) {
+                      await deleteTask(task.id!);
+                    }
+                  } catch (e) {
+                    print(e);
+                  }
                 },
                 child: const Icon(Icons.delete)),
           ),

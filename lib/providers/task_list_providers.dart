@@ -8,22 +8,22 @@ class TaskListProviders extends ChangeNotifier {
 
   TaskListProviders({required this.taskList});
 
-  update() {
-    final box = GetStorage();
-    box.write('taskList', taskList.map((e) => e.toMap()).toList());
+  // update() {
+  //   final box = GetStorage();
+  //   box.write('taskList', taskList.map((e) => e.toMap()).toList());
 
-    final list = box.read('tasklist');
-    print(list);
-    notifyListeners();
-  }
+  //   final list = box.read('tasklist');
+  //   print(list);
+  //   notifyListeners();
+  // }
 
   addTask(Task task) {
     taskList.add(task);
-    update();
+    notifyListeners();
   }
 
   deleteTask(int index) {
     taskList.removeAt(index);
-    update();
+    notifyListeners();
   }
 }
