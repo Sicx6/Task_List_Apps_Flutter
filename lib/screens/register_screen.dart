@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:note_demo/providers/users_provider.dart';
 import 'package:note_demo/screens/login_screen.dart';
+import 'package:reactive_forms/reactive_forms.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
   RegisterScreen({Key? key}) : super(key: key);
 
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final nameController = TextEditingController();
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  // final emailController = TextEditingController();
+  final form = FormGroup({
+    'email': FormControl(validators: [Validators.required, Validators.email]),
+    'password':
+        FormControl(validators: [Validators.required, Validators.minLength(6)]),
+    'name':
+        FormControl(validators: [Validators.required, Validators.minLength(1)]),
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,87 +38,110 @@ class RegisterScreen extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            Column(
-              children: [
-                TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Name',
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                TextField(
-                  controller: emailController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'email',
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                TextField(
-                  controller: passwordController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'password',
-                  ),
-                  obscureText: true,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+            ReactiveForm(
+                formGroup: form,
+                child: Column(
                   children: [
-                    TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: ((context) => LoginScreen())));
-                        },
-                        child: const Text('Already sign up? Sign In')),
+                    ReactiveTextField(
+                      formControlName: 'name',
+                      decoration: const InputDecoration(
+                        labelText: 'Name',
+                        suffixIcon: Icon(Icons.person),
+                        border: OutlineInputBorder(),
+                      ),
+                      validationMessages: {
+                        ValidationMessage.required: (error) =>
+                            'Please input your name'
+                      },
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    ReactiveTextField(
+                      formControlName: 'email',
+                      decoration: const InputDecoration(
+                        labelText: 'email',
+                        suffixIcon: Icon(Icons.email),
+                        border: OutlineInputBorder(),
+                      ),
+                      validationMessages: {
+                        ValidationMessage.required: (error) =>
+                            'Email format is invalid'
+                      },
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    ReactiveTextField(
+                      formControlName: 'password',
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        labelText: 'password',
+                        suffixIcon: Icon(Icons.lock),
+                        border: OutlineInputBorder(),
+                      ),
+                      validationMessages: {
+                        ValidationMessage.minLength: (error) =>
+                            'Password must contain 6 characters or above'
+                      },
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: ((context) => LoginScreen())));
+                            },
+                            child: const Text('Already sign up? Sign In')),
+                      ],
+                    ),
+                    ReactiveFormConsumer(builder: ((context, formGroup, child) {
+                      print(form);
+                      return Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: form.valid
+                              ? () async {
+                                  try {
+                                    AppUsers.instance.signUp(
+                                      email: form.control('email').value,
+                                      password: form.control('password').value,
+                                      name: form.control('email').value,
+                                    );
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            content: Text(
+                                                'User ${form.control('email').value} has succesfully register'),
+                                          );
+                                        });
+                                  } catch (e) {
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            content: Text(e.toString()),
+                                          );
+                                        });
+                                  }
+                                }
+                              : null,
+                          child: const Text('Sign Up'),
+                        ),
+                      );
+                    }))
                   ],
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      try {
-                        AppUsers.instance.signUp(
-                            email: emailController.text,
-                            password: passwordController.text,
-                            name: nameController.text);
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                content: Text(
-                                    'User ${emailController.text} has succesfully register'),
-                              );
-                            });
-                      } catch (e) {
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                content: Text(e.toString()),
-                              );
-                            });
-                      }
-                    },
-                    child: const Text('Sign Up'),
-                  ),
-                ),
-              ],
-            )
+                ))
           ],
         ),
       ),

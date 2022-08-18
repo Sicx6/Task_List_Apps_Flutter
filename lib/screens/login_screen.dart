@@ -1,13 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:note_demo/providers/users_provider.dart';
 import 'package:note_demo/screens/register_screen.dart';
 import 'package:note_demo/widgets/custom_circular_progress_bar.dart';
+import 'package:reactive_forms/reactive_forms.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   LoginScreen({Key? key}) : super(key: key);
 
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
+
   final passwordController = TextEditingController();
+
+  final form = FormGroup({
+    'email': FormControl(validators: [Validators.required, Validators.email]),
+    'password':
+        FormControl(validators: [Validators.required, Validators.minLength(1)]),
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,78 +41,89 @@ class LoginScreen extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            Column(
-              children: [
-                TextField(
-                  controller: emailController,
-                  decoration: const InputDecoration(
-                    labelText: 'email',
-                    border: OutlineInputBorder(),
+            ReactiveForm(
+              formGroup: form,
+              child: Column(
+                children: [
+                  ReactiveTextField(
+                    formControlName: 'email',
+                    decoration: const InputDecoration(
+                      labelText: 'email',
+                      suffixIcon: Icon(Icons.email),
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
                   ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                TextField(
-                  controller: passwordController,
-                  decoration: const InputDecoration(
-                    labelText: 'password',
-                    border: OutlineInputBorder(),
+                  const SizedBox(
+                    height: 10,
                   ),
-                  obscureText: true,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: ((context) => RegisterScreen())));
-                        },
-                        child: const Text('Sign Up')),
-                  ],
-                ),
-                Container(
-                  height: 50,
-                  width: MediaQuery.of(context).size.width,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      try {
-                        LoadingIndicator.showLoadingDialog(context);
-                        await AppUsers.instance.signIn(
-                          email: emailController.text,
-                          password: passwordController.text,
-                        );
-                        Navigator.pop(context);
-                      } catch (e) {
-                        Navigator.pop(context);
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              content: Text(e.toString()),
-                            );
+                  ReactiveTextField(
+                    formControlName: 'password',
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      labelText: 'password',
+                      suffixIcon: Icon(Icons.lock),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: ((context) => RegisterScreen())));
                           },
-                        );
-                        // showDialog(
-                        //   context: context,
-                        //   builder: (context) {
-                        //     return const Center(
-                        //         child: CircularProgressIndicator());
-                        //   },
-                        // );
-
-                      }
-                    },
-                    child: const Text('Sign In'),
+                          child: const Text('Sign Up')),
+                    ],
                   ),
-                ),
-              ],
+                  ReactiveFormConsumer(builder: ((context, form, child) {
+                    print(form.value);
+                    return Container(
+                      height: 50,
+                      width: MediaQuery.of(context).size.width,
+                      child: ElevatedButton(
+                        onPressed: form.valid
+                            ? () async {
+                                try {
+                                  LoadingIndicator.showLoadingDialog(context);
+                                  await AppUsers.instance.signIn(
+                                    email: form.control('email').value,
+                                    password: form.control('password').value,
+                                  );
+                                  Navigator.pop(context);
+                                } catch (e) {
+                                  Navigator.pop(context);
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        content: Text(e.toString()),
+                                      );
+                                    },
+                                  );
+                                  // showDialog(
+                                  //   context: context,
+                                  //   builder: (context) {
+                                  //     return const Center(
+                                  //         child: CircularProgressIndicator());
+                                  //   },
+                                  // );
+
+                                }
+                              }
+                            : null,
+                        child: const Text('Sign In'),
+                      ),
+                    );
+                  })),
+                ],
+              ),
             )
           ],
         ),

@@ -5,13 +5,17 @@ import 'package:note_demo/providers/users_provider.dart';
 import 'package:note_demo/services/api.dart';
 import 'package:note_demo/widgets/custom_circular_progress_bar.dart';
 import 'package:provider/provider.dart';
+import 'package:reactive_forms/reactive_forms.dart';
 
 class AddTaskScreen extends StatelessWidget {
   AddTaskScreen({Key? key}) : super(key: key);
 
-  final TextEditingController titleTextController = TextEditingController();
-  final TextEditingController descriptionTextController =
-      TextEditingController();
+  final form = FormGroup({
+    'title':
+        FormControl(validators: [Validators.required, Validators.minLength(3)]),
+    'description':
+        FormControl(validators: [Validators.required, Validators.minLength(5)]),
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -37,64 +41,81 @@ class AddTaskScreen extends StatelessWidget {
               ),
             ],
           ),
-          Column(
-            children: [
-              TextField(
-                controller: titleTextController,
-                decoration: const InputDecoration(
-                  labelText: 'Title',
-                ),
-              ),
-              TextField(
-                controller: descriptionTextController,
-                decoration: const InputDecoration(
-                  labelText: 'Description',
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Container(
-                height: 50,
-                width: MediaQuery.of(context).size.width,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    try {
-                      LoadingIndicator.showLoadingDialog(context);
-                      print(titleTextController.text);
-                      print(descriptionTextController.text);
-
-                      final task = Task(
-                          title: titleTextController.text,
-                          description: descriptionTextController.text,
-                          author: AppUsers.instance.user!.displayName ?? '');
-
-                      final result = await addTask(task);
-
-                      if (result) {
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                      } else {
-                        throw 'Unable to add task';
-                      }
-                    } catch (e) {
-                      Navigator.pop(context);
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              content: Text(e.toString()),
-                            );
-                          });
-                    }
-                    // Provider.of<TaskListProviders>(context, listen: false)
-                    //     .addTask(task);
+          ReactiveForm(
+            formGroup: form,
+            child: Column(
+              children: [
+                ReactiveTextField(
+                  formControlName: 'title',
+                  decoration: const InputDecoration(
+                    labelText: 'title',
+                  ),
+                  validationMessages: {
+                    ValidationMessage.minLength: (error) =>
+                        'Please insert you proper task title'
                   },
-                  child: const Text('Add Task'),
                 ),
-              ),
-            ],
-          )
+                ReactiveTextField(
+                  formControlName: 'description',
+                  decoration: const InputDecoration(
+                    labelText: 'description',
+                  ),
+                  validationMessages: {
+                    ValidationMessage.minLength: (error) =>
+                        'Please insert you proper task description'
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                ReactiveFormConsumer(builder: ((context, formGroup, child) {
+                  return Container(
+                    height: 50,
+                    width: MediaQuery.of(context).size.width,
+                    child: ElevatedButton(
+                      onPressed: form.valid
+                          ? () async {
+                              try {
+                                LoadingIndicator.showLoadingDialog(context);
+
+                                final task = Task(
+                                    title: form.control('title').value,
+                                    description:
+                                        form.control('description').value,
+                                    author:
+                                        AppUsers.instance.user!.displayName ??
+                                            '',
+                                    createdDate: DateTime.now());
+
+                                final result = await addTask(task);
+
+                                if (result) {
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                } else {
+                                  throw 'Unable to add task';
+                                }
+                              } catch (e) {
+                                Navigator.pop(context);
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        content: Text(e.toString()),
+                                      );
+                                    });
+                              }
+                              // Provider.of<TaskListProviders>(context, listen: false)
+                              //     .addTask(task);
+                            }
+                          : null,
+                      child: const Text('Add Task'),
+                    ),
+                  );
+                }))
+              ],
+            ),
+          ),
         ]),
       ),
     );

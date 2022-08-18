@@ -21,6 +21,7 @@ class HomeScreen extends StatelessWidget {
             return Container(
               padding: const EdgeInsets.only(top: 60, right: 25, left: 25),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
@@ -30,6 +31,16 @@ class HomeScreen extends StatelessWidget {
                             fontSize: 25, fontWeight: FontWeight.bold),
                       ),
                       Expanded(child: Container()),
+                      IconButton(
+                        splashRadius: 25,
+                        onPressed: () {
+                          AppUsers.instance.signOut();
+                        },
+                        icon: const Icon(
+                          Icons.logout,
+                          size: 30,
+                        ),
+                      ),
                       IconButton(
                         splashRadius: 25,
                         onPressed: () {
@@ -44,16 +55,6 @@ class HomeScreen extends StatelessWidget {
                       ),
                       const SizedBox(
                         width: 10,
-                      ),
-                      IconButton(
-                        splashRadius: 25,
-                        onPressed: () {
-                          AppUsers.instance.signOut();
-                        },
-                        icon: const Icon(
-                          Icons.logout,
-                          size: 30,
-                        ),
                       ),
                     ],
                   ),
@@ -103,7 +104,6 @@ class TaskContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
-      height: 140,
       margin: const EdgeInsets.all(10),
       decoration: BoxDecoration(
           color: Colors.white,
@@ -133,6 +133,19 @@ class TaskContainer extends StatelessWidget {
                 height: 10,
               ),
               Text(task.author),
+              const SizedBox(
+                height: 10,
+              ),
+              task.createdDate != null
+                  ? Column(
+                      children: [
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Text(task.createdDate.toString())
+                      ],
+                    )
+                  : Container(),
             ],
           ),
           Expanded(child: Container()),
