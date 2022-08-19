@@ -6,11 +6,15 @@ class Task {
   String author;
   String? id;
   DateTime? createdDate;
+  String authorId;
+  bool completed;
 
   Task(
       {required this.title,
       required this.description,
       required this.author,
+      required this.authorId,
+      this.completed = false,
       this.createdDate,
       this.id});
 
@@ -22,6 +26,8 @@ class Task {
         author: data['author'] ?? '',
         id: id,
         createdDate: (data['createdDate'] as Timestamp).toDate(),
+        authorId: data['authorId'] ?? '',
+        completed: data['completed'] ?? false,
       );
     } catch (e) {
       print(e);
@@ -35,6 +41,8 @@ class Task {
       'description': description,
       'author': author,
       'createdDate': createdDate,
+      'authorId': authorId,
+      'completed': completed,
     };
   }
 }

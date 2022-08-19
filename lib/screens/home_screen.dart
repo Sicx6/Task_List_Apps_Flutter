@@ -102,76 +102,89 @@ class TaskContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      margin: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.grey.withOpacity(0.2),
-                spreadRadius: 2,
-                blurRadius: 5,
-                offset: const Offset(5, 5))
-          ]),
-      child: Row(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                task.title,
-                style:
-                    const TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+    return InkWell(
+      onTap: () {
+        task.completed = !task.completed;
+        updateTask(task);
+      },
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        margin: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: const Offset(5, 5))
+            ]),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    task.title,
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.w600,
+                      decoration:
+                          task.completed ? null : TextDecoration.lineThrough,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(task.description),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(task.author),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  task.createdDate != null
+                      ? Column(
+                          children: [
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(task.createdDate.toString())
+                          ],
+                        )
+                      : Container(),
+                ],
               ),
-              const SizedBox(
-                height: 10,
-              ),
-              Text(task.description),
-              const SizedBox(
-                height: 10,
-              ),
-              Text(task.author),
-              const SizedBox(
-                height: 10,
-              ),
-              task.createdDate != null
-                  ? Column(
-                      children: [
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(task.createdDate.toString())
-                      ],
-                    )
-                  : Container(),
-            ],
-          ),
-          Expanded(child: Container()),
-          const SizedBox(
-            width: 10,
-          ),
-          Material(
-            color: Colors.transparent,
-            child: InkWell(
-                onTap: () async {
-                  try {
-                    // final taskListProviders =
-                    //     Provider.of<TaskListProviders>(context, listen: false);
-                    // taskListProviders.deleteTask(index);
-                    // await deleteTask('taskId');
-                    print(task.id);
-                    if (task.id != null) {
-                      await deleteTask(task.id!);
+            ),
+            Expanded(child: Container()),
+            const SizedBox(
+              width: 10,
+            ),
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                  onTap: () async {
+                    try {
+                      // final taskListProviders =
+                      //     Provider.of<TaskListProviders>(context, listen: false);
+                      // taskListProviders.deleteTask(index);
+                      // await deleteTask('taskId');
+                      print(task.id);
+                      if (task.id != null) {
+                        await deleteTask(task.id!);
+                      }
+                    } catch (e) {
+                      print(e);
                     }
-                  } catch (e) {
-                    print(e);
-                  }
-                },
-                child: const Icon(Icons.delete)),
-          ),
-        ],
+                  },
+                  child: const Icon(Icons.delete)),
+            ),
+          ],
+        ),
       ),
     );
   }

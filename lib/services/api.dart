@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:note_demo/models/task_model.dart';
+import 'package:note_demo/providers/users_provider.dart';
 
 Future<List<Task>> getTaskList() async {
   final snapshot = await FirebaseFirestore.instance.collection('task').get();
@@ -10,6 +11,7 @@ Future<List<Task>> getTaskList() async {
 Stream<List<Task>> getTaskListStream() {
   final snapshots = FirebaseFirestore.instance
       .collection('task')
+      .where('authorId', isEqualTo: AppUsers().user!.uid)
       .orderBy('createdDate', descending: true)
       .snapshots();
   return snapshots.map((snapshot) =>
@@ -29,6 +31,18 @@ Future<bool> addTask(Task task) async {
 Future<bool> deleteTask(String taskId) async {
   try {
     await FirebaseFirestore.instance.doc('task/$taskId').delete();
+    return true;
+  } catch (e) {
+    print(e);
+    throw (e);
+  }
+}
+
+Future<bool> updateTask(Task task) async {
+  try {
+    await FirebaseFirestore.instance
+        .doc('task/${task.id}')
+        .update(task.toMap());
     return true;
   } catch (e) {
     print(e);

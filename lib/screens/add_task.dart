@@ -85,7 +85,8 @@ class AddTaskScreen extends StatelessWidget {
                                     author:
                                         AppUsers.instance.user!.displayName ??
                                             '',
-                                    createdDate: DateTime.now());
+                                    createdDate: DateTime.now(),
+                                    authorId: AppUsers().user!.uid);
 
                                 final result = await addTask(task);
 
