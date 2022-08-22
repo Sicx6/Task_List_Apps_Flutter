@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class Task {
   String title;
@@ -44,5 +45,9 @@ class Task {
       'authorId': authorId,
       'completed': completed,
     };
+  }
+
+  get dateInString {
+    return DateFormat('d/M/y').add_jm().format(createdDate!);
   }
 }

@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_interpolation_to_compose_strings
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:note_demo/models/task_model.dart';
 import 'package:note_demo/providers/task_list_providers.dart';
 import 'package:note_demo/providers/users_provider.dart';
@@ -130,6 +131,7 @@ class TaskContainer extends StatelessWidget {
                   Text(
                     task.title,
                     style: TextStyle(
+                      color: task.completed ? Colors.purple : Colors.redAccent,
                       fontSize: 25,
                       fontWeight: FontWeight.w600,
                       decoration:
@@ -147,16 +149,12 @@ class TaskContainer extends StatelessWidget {
                   const SizedBox(
                     height: 10,
                   ),
-                  task.createdDate != null
-                      ? Column(
-                          children: [
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(task.createdDate.toString())
-                          ],
-                        )
-                      : Container(),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    task.dateInString,
+                  ),
                 ],
               ),
             ),
