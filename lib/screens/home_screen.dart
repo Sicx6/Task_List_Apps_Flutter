@@ -5,6 +5,7 @@ import 'package:note_demo/models/task_model.dart';
 import 'package:note_demo/providers/task_list_providers.dart';
 import 'package:note_demo/providers/users_provider.dart';
 import 'package:note_demo/screens/add_task.dart';
+import 'package:note_demo/screens/edit_task.dart';
 import 'package:note_demo/services/api.dart';
 import 'package:provider/provider.dart';
 
@@ -107,6 +108,13 @@ class TaskContainer extends StatelessWidget {
       onTap: () {
         task.completed = !task.completed;
         updateTask(task);
+      },
+      onLongPress: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return EditTaskScreen(
+            task: task,
+          );
+        }));
       },
       child: Container(
         padding: const EdgeInsets.all(20),
