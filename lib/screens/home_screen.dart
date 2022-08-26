@@ -92,8 +92,8 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class TaskContainer extends StatelessWidget {
-  const TaskContainer({
+class TaskContainer extends StatefulWidget {
+  TaskContainer({
     Key? key,
     required this.task,
     required this.index,
@@ -103,95 +103,138 @@ class TaskContainer extends StatelessWidget {
   final int index;
 
   @override
+  State<TaskContainer> createState() => _TaskContainerState();
+}
+
+class _TaskContainerState extends State<TaskContainer> {
+  bool editable = false;
+
+  @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        task.completed = !task.completed;
-        updateTask(task);
-      },
-      onLongPress: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return EditTaskScreen(
-            task: task,
-          );
-        }));
-      },
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        margin: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  spreadRadius: 2,
-                  blurRadius: 5,
-                  offset: const Offset(5, 5))
-            ]),
-        child: Row(
-          children: [
-            Expanded(
-              flex: 3,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    task.title,
-                    style: TextStyle(
-                      color: task.completed ? Colors.purple : Colors.redAccent,
-                      fontSize: 25,
-                      fontWeight: FontWeight.w600,
-                      decoration:
-                          task.completed ? null : TextDecoration.lineThrough,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Text(task.description),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Text(task.author),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    task.dateInString,
-                  ),
-                ],
-              ),
-            ),
-            Expanded(child: Container()),
-            const SizedBox(
-              width: 10,
-            ),
-            Material(
-              color: Colors.transparent,
-              child: InkWell(
-                  onTap: () async {
-                    try {
-                      // final taskListProviders =
-                      //     Provider.of<TaskListProviders>(context, listen: false);
-                      // taskListProviders.deleteTask(index);
-                      // await deleteTask('taskId');
-                      print(task.id);
-                      if (task.id != null) {
-                        await deleteTask(task.id!);
-                      }
-                    } catch (e) {
-                      print(e);
-                    }
-                  },
-                  child: const Icon(Icons.delete)),
-            ),
-          ],
+    if (editable) {
+      print(editable);
+      return InkWell(
+        onTap: () {
+          widget.task.completed = !widget.task.completed;
+          updateTask(widget.task);
+        },
+        onLongPress: () {
+          editable == false;
+          setState(() {});
+          print(editable);
+        },
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          margin: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: const Offset(5, 5))
+              ]),
+          child: Text('Edit'),
         ),
-      ),
-    );
+      );
+    } else {
+      return InkWell(
+        onTap: () {
+          widget.task.completed = !widget.task.completed;
+          updateTask(widget.task);
+        },
+        onLongPress: () {
+          // Navigator.push(context, MaterialPageRoute(builder: (context) {
+          //   return EditTaskScreen(
+          //     task: widget.task,
+          //   );
+          // }));
+          editable == true;
+          setState(() {});
+          print(editable);
+        },
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          margin: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: const Offset(5, 5))
+              ]),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 3,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.task.title,
+                      style: TextStyle(
+                        color: widget.task.completed
+                            ? Colors.purple
+                            : Colors.redAccent,
+                        fontSize: 25,
+                        fontWeight: FontWeight.w600,
+                        decoration: widget.task.completed
+                            ? null
+                            : TextDecoration.lineThrough,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(widget.task.description),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(widget.task.author),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      widget.task.dateInString,
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(child: Container()),
+              const SizedBox(
+                width: 10,
+              ),
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                    onTap: () async {
+                      try {
+                        // final taskListProviders =
+                        //     Provider.of<TaskListProviders>(context, listen: false);
+                        // taskListProviders.deleteTask(index);
+                        // await deleteTask('taskId');
+                        print(widget.task.id);
+                        if (widget.task.id != null) {
+                          await deleteTask(widget.task.id!);
+                        }
+                      } catch (e) {
+                        print(e);
+                      }
+                    },
+                    child: const Icon(Icons.delete)),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
   }
 }
